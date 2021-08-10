@@ -1,4 +1,4 @@
-package encrypt
+package cipher
 
 import (
 	"crypto/aes"
@@ -65,6 +65,8 @@ func decryptStream(key string, iv []byte) (cipher.Stream, error) {
 	return cipher.NewCFBDecrypter(block, iv), nil
 }
 
+// Decrypt will take in a key and a hex value ciphered and return an decrypted
+// string value
 func Decrypt(key, cipherHex string) (string, error) {
 	ciphertext, err := hex.DecodeString(cipherHex)
 	if err != nil {
