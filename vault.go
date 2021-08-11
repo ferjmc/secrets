@@ -94,3 +94,36 @@ func (v *Vault) Set(key, value string) error {
 	}
 	return nil
 }
+
+func (v *Vault) List() ([]string, error) {
+	v.mutex.Lock()
+	defer v.mutex.Unlock()
+	err := v.load()
+	if err != nil {
+		return nil, err
+	}
+	var ret []string
+	for k := range v.keyValues {
+		ret = append(ret, k)
+	}
+	return ret, nil
+}
+
+func (v *Vault) Del(key string) error {
+	v.mutex.Lock()
+	defer v.mutex.Unlock()
+	err := v.load()
+	if err != nil {
+		return err
+	}
+	_, ok := v.keyValues[key]
+	if !ok {
+		return errors.New("secrets: no value for key provided")
+	}
+	delete(v.keyValues, key)
+	err = v.save()
+	if err != nil {
+		return err
+	}
+	return nil
+}
